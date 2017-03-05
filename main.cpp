@@ -1,4 +1,8 @@
 /*
+
+	capstone_project 
+	20123361 박기현
+
     output :    초차림 한차림 승리 히스토리
     history :   전위치 후위치 현재돌 먹은돌 장군여부
     name :      졸,병 J    차 C    마 H    상 X
@@ -13,16 +17,16 @@ int main()
 {
 	char file_name[100] ;
 	int num, start_txt ;
-	cout << "\n파일 이름을 쓰세요 :" ;
+	cout << "\n\t파일 이름을 쓰세요 :" ;
 	cin>> file_name  ;
 
-	cout << "파일의 갯수를 쓰세요 :" ;
+	cout << "\t파일의 갯수를 쓰세요 :" ;
 	cin >> num ;
 		
-	cout << "파일의 시작 숫자를 쓰세요 :" ;
+	cout << "\t파일의 시작 숫자를 쓰세요 :" ;
 	cin >> start_txt ;
 
-  //  Devide_Doc(num+start_txt, file_name, start_txt);
+	Devide_Doc(num+start_txt, file_name, start_txt);
     Parser();
     return 0;
 }
