@@ -1,8 +1,8 @@
 #include "File_divide.h"
 
 int start_page = 0 ;
-bool braket_ = false ;
 
+// 파싱 자릿수 맞추기
 char* Fit_Digit(int num_, int cipher)
 {
 	int original_num_len = to_string(num_).length() ;
@@ -20,20 +20,57 @@ char* Fit_Digit(int num_, int cipher)
 	return Trans_char; 
 }
 
-void Devide_Doc(int end_txt, char *original_name, int start_txt)
+char First_letter(char *str)
 {
+	return str[0] ;
+}
+
+char Last_letter(char *str)
+{
+	return str[strlen(str)-1] ;
+}
+
+// 브라켓이 열렸는지의 여부.
+bool Isbraket(char *str, bool *braket)
+{
+	if(First_letter(str) == LEFT_BRAKET || *braket == true){
+		*braket = true ;
+		// 문장의 마지막이 주석을 닫는것인지 확인.
+		if(Last_letter(str) == RIGHT_BRAKET ){
+			*braket = false ;
+		}
+		return true ;
+	}
+	return false ;
+}
+
+bool NewLine_handling(char *str, int *num_line, char* File_name)
+{
+	if (First_letter(str) == NULL) 
+		(*num_line)++ ;
+	if(*num_line == 2 ){
+		// 파일을 저장한다.
+		NextPage_Filename(File_name) ;
+		return true ;
+	}
+
+	return false ;
+}
+
+void Devide_Doc(int end_txt, char *original_name, int start_txt, int chiper)
+{
+	bool braket_ = false ;
 	for(int num_for = start_txt ; num_for < end_txt ; num_for++){
 		// text 이름 넣기.
 		char *name_copy = new char[MIN] ;
 		char *File_name = new char[MIN] ;
 		char *sentence = new char[MIN];
-		int num_of_leftbraket = 0 ;
 
 		// 작성한 파일 이름을 형식에 맞게.
 		strcpy(name_copy, original_name) ;
-		strcat(name_copy, Fit_Digit(num_for, to_string(end_txt).length())) ;
+		strcat(name_copy, Fit_Digit(num_for, chiper)) ;
 		strcat(name_copy, TEXT_GIBO) ;
-		cout << name_copy << endl ;
+		cout << "\t" << name_copy << endl ;
 
 		// 읽을 파일
 		ifstream stream(name_copy) ;
@@ -41,35 +78,23 @@ void Devide_Doc(int end_txt, char *original_name, int start_txt)
 			cerr << "oepn failed " << endl ;
 			break ;
 		}
-
-		Convert_Filename(File_name) ;
+		NextPage_Filename(File_name) ;
 
 		while (!stream.eof())
 		{
 			// 저장할 파일들 0.txt 부터 시작한다.
 			ofstream ostream(File_name);
 			int new_line = 0 ;
-
 			while (!stream.eof())
 			{
 				stream.getline(sentence, MIN);
-
-				// 주석이 시작됐거나 시작이면
-				if(sentence[0] == '{' || braket_ == true){
-					braket_ = true ;
-					// 문장의 마지막이 주석을 닫는것인지 확인.
-					if(sentence[strlen(sentence)-1] == '}'){
-						braket_ = false ;
-					}
+				// 브라켓이 열리면 주석이므로 주석은 저장하지 않고 넘어간다.
+				if(Isbraket(sentence, &braket_))
 					continue ;
-				}
 				else {
-					if (sentence[0] == NULL) new_line++ ;
-					if(new_line == 2 ){
-						// 파일을 저장한다.
-						Convert_Filename(File_name) ;
+					// 개행이 두번 진행되면 한 게임이 파싱이 완료된 것
+					if(NewLine_handling(sentence, &new_line, File_name))
 						break ;
-					}
 					ostream << sentence <<endl ;
 				}
 			}
@@ -82,7 +107,7 @@ void Devide_Doc(int end_txt, char *original_name, int start_txt)
 	}
 }
 
-void Convert_Filename(char *str)
+void NextPage_Filename(char *str)
 {
 	// int to char
 	strcpy(str, "") ;

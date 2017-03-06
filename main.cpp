@@ -16,7 +16,7 @@
 int main()
 {
 	char file_name[100] ;
-	int num, start_txt ;
+	int num, start_txt , chiper ;
 	cout << "\n\t파일 이름을 쓰세요 :" ;
 	cin>> file_name  ;
 
@@ -26,7 +26,10 @@ int main()
 	cout << "\t파일의 시작 숫자를 쓰세요 :" ;
 	cin >> start_txt ;
 
-	Devide_Doc(num+start_txt, file_name, start_txt);
+	cout << "\t파일의 자릿수를 쓰세요 :" ;
+	cin >> chiper ;
+	
+	Devide_Doc(num+start_txt, file_name, start_txt, chiper);
     Parser();
     return 0;
 }
